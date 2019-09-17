@@ -1,27 +1,75 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native'
 
-const styles = StyleSheet.create({
-  bigBlue: {
-    color: 'blue',
-    fontWeight: 'bold',
-    fontSize: 30
-  },
-  red: {
-    color: 'red'
-  }
-})
+
 
 export default class MyFirstApp extends Component {
-  render() {
 
-    return (
-      <View>
-        <Text style={styles.red}>Just Red</Text>
-        <Text style={styles.bigBlue}>Just BigBlue</Text>
-        <Text style={[styles.bigBlue, styles.red]}>bigBlue, the red</Text>
-        <Text style={[styles.red, styles.bigBlue]}>Red, the bigBlue</Text>
-      </View>
-    )
-  }
+	onPressButton(){
+		alert('You tapped the botton')
+	}
+
+	onLongPressButton(){
+		alert('You long pressed the button')
+	}
+
+	render() {
+		return (
+			<View style={styles.container}>
+				<TouchableOpacity onPress={this.onPressButton} underlayColor="white">
+					<View style={styles.button}>
+						<Text style={styles.buttonText}>TouchableHighlight</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity onPress={this.onPressButton}>
+					<View style={styles.button}>
+						<Text style={styles.buttonText}>TouchableOpacity</Text>
+					</View>
+				</TouchableOpacity>
+
+
+				<TouchableNativeFeedback 
+					onPress={this.onPressButton}
+					background={Platform.OS === 'android' ? TouchableNativeFeedback.SelectableBackground() : ''}>
+					<View style={styles.button}>
+						<Text style={styles.buttonText}>
+							TouchableNativeFeedback {Platform.OS !== 'android' ? '(Android only)' : ''}
+						</Text>
+					</View>
+				</TouchableNativeFeedback>
+
+				<TouchableWithoutFeedback onPress={this.onPressButton}>
+					<View style={styles.button}>
+						<Text style={styles.buttonText}>TouchableWithoutFeedback</Text>
+					</View>
+				</TouchableWithoutFeedback>
+				<TouchableHighlight onPress={this.onPressButton} onLongPress={this.onLongPressButton} underlayColor="white">
+					<View style={styles.button}>
+						<Text style={styles.buttonText}>Touchable with Long Press</Text>
+					</View>	
+				</TouchableHighlight>
+			</View>
+		)
+	}
 }
+
+
+
+const styles = StyleSheet.create({
+	container: {
+		paddingTop: 60,
+		alignItems: "center"
+	},
+	button:{
+		marginBottom: 30,
+		width: 200,
+		alignItems: "center",
+		backgroundColor: "#2196F3"
+	},	
+	buttonText: {
+		textAlign: "center",
+		padding: 20,
+		color: "white"
+	}
+})
