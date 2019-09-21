@@ -1,5 +1,7 @@
 # Tutorial React Native
 
 - Iniciando um projeto
-``` react-native init <nome> ```
+```
+    react-native init <nome>
+```
 
