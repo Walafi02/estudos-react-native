@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
+
+import api from '../services/api'
 
 export default class main extends Component {
 
@@ -7,10 +9,40 @@ export default class main extends Component {
         title: "JSRunt"
     }
 
+    state = {
+        docs: []
+    } 
+
+    componentDidMount() {
+        this.loadProducts()
+    }
+
+    loadProducts = async () => {
+        const response = await api.get('/products')
+        const { docs } = response.data
+
+        this.setState({ docs})
+    }
+
+    renderItem = ({item}) => (
+        <View>
+            <Text>{item.title}</Text>
+            <Text>{item.description}</Text>
+
+            <TouchableOpacity onPress={() => {}}>
+                <Text>Acessar</Text>
+            </TouchableOpacity>
+        </View>
+    )
+
     render() {
         return (
             <View>
-                <Text> Página main </Text>
+                <FlatList 
+                    data= {this.state.docs}
+                    keyExtractor={item => item._id}
+                    renderItem={this.renderItem}
+                />
             </View>
         )
     }
