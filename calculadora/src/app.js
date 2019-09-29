@@ -1,141 +1,140 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-alert */
+/* eslint-disable no-eval */
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
 
-import Display from './components/display'
-import Button from './components/button'
+import Display from './components/display';
+import Button from './components/button';
 
 const initialState = {
   displayValue: '0',
   clearDisplay: false,
   operation: null,
   values: [0, 0],
-  current: 0
-}
+  current: 0,
+};
 
-export default function App() {
+export default class App extends React.Component {
+  state = {...initialState};
 
-  const [ data, setData] = useState(initialState)
-  
-  function clearMemory() {
-    setData({ ...initialState})
+  constructor(props) {
+    super(props);
+    this.clearMemory = this.clearMemory.bind(this);
+    this.addDigite = this.addDigite.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.chageValue = this.chageValue.bind(this);
   }
 
-  function addDigite(n) {
+  chageValue() {
+    const i = this.state.current;
+    const values = [...this.state.values];
+    values[i] = this.state.values[i] * -1;
+    this.setState({values, displayValue: values[i]});
+  }
 
-    if(n == '.' && data.displayValue.includes('.')){
-        return
+  clearMemory() {
+    this.setState({...initialState});
+  }
+
+  addDigite(n) {
+    if (n === '.' && this.state.displayValue.includes('.')) {
+      return;
     }
 
-    const clearDisp = data.displayValue === '0' || data.clearDisplay;
-    const currentValue = clearDisp ? '' : data.displayValue;
-    const dV = currentValue + n;
+    const clearDisp =
+      this.state.displayValue === '0' || this.state.clearDisplay;
+    const currentValue = clearDisp ? '' : this.state.displayValue;
+    const displayValue = currentValue + n;
 
-    console.log(dV)
-    // const clearDisplay = false;
-    
+    this.setState({displayValue, clearDisplay: false});
 
-    setData({ ...data, "displayValue": "45"});
-    console.log(data)
-
-    if(n !== '.'){
-        const i = data.current;
-        const newValue = parseFloat(dV)
-        const values = [data.values]
-        values[i] = newValue
-        setData({...data, values})
+    if (n !== '.') {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+      const values = [...this.state.values];
+      values[i] = newValue;
+      this.setState({values});
     }
   }
 
-  const setOperation = (operation) => {
-    // console.log(operation)
-    if(data.current === 0){
-      setData({...data,  operation: operation, current: 1, clearDisplay: true})
-    }else{
-      // console.log(data)
-        const equals = operation === '='
-        const currentOperations = data.operation
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({operation, current: 1, clearDisplay: true});
+    } else {
+      const equals = operation === '=';
+      const currentOperations = this.state.operation;
+      const values = [...this.state.values];
 
-        const values = [...data.values]
-        
-        try{
-            console.log(`${values[0]} ${currentOperations} ${values[1]}`)
-            values[0] = eval( `${values[0]} ${currentOperations} ${values[1]}`)
-        }catch(e){
-            values[0] = data.values[0]
-        }
-        values[1] = 0
+      try {
+        values[0] = eval(`${values[0]} ${currentOperations} ${values[1]}`);
+      } catch (e) {
+        values[0] = this.state.values[0];
+      }
+      values[1] = 0;
 
-        // console.log(values[0], values[1])
-
-        setData({
-            displayValue: values[0],
-            operation: equals ? null : operation,
-            current: equals ? 0 : 1,
-            clearDisplay: !equals,
-            values
-        })
+      this.setState({
+        displayValue: values[0],
+        operation: equals ? null : operation,
+        current: equals ? 0 : 1,
+        clearDisplay: !equals,
+        values,
+      });
     }
-}
+  }
 
-
-
-
-
-
-
-
-
-
-  return (
-    <View style={styles.container}>
-      <Display value={data.displayValue} />            
-      <View style={styles.body}>
-        <View style={ styles.rows }>
-          <Button label="AC" click={clearMemory} />
-          <Button label="+/-" click={() => alert("nada")} />
-          <Button label="%" click={() => alert("nada")} />
-          <Button label="-" click={setOperation} operation />
-        </View>
-        <View style={ styles.rows }>
-          <Button label="7" click={addDigite} />
-          <Button label="8" click={addDigite} />
-          <Button label="9" click={addDigite} />
-          <Button label="*" click={setOperation} operation />
-        </View>
-        <View style={ styles.rows }>
-          <Button label="4" click={addDigite} />
-          <Button label="5" click={addDigite} />
-          <Button label="6" click={addDigite} />
-          <Button label="-" click={setOperation} operation />
-        </View>
-        <View style={ styles.rows }>
-          <Button label="1" click={addDigite} />
-          <Button label="2" click={addDigite} />
-          <Button label="3" click={addDigite} />
-          <Button label="+" click={setOperation} operation />
-        </View>
-        <View style={ styles.rows }>
-          <Button label="0" click={addDigite} doubleSpace />
-          <Button label="." click={addDigite} />
-          <Button label="=" click={setOperation} operation />
+  render() {
+    return (
+      <View style={styles.container}>
+        <Display value={this.state.displayValue} />
+        <View style={styles.body}>
+          <View style={styles.rows}>
+            <Button label="AC" click={this.clearMemory} />
+            <Button label="+/-" click={this.chageValue} />
+            <Button label="%" click={() => alert('nada2')} />
+            <Button label="-" click={this.setOperation} operation />
+          </View>
+          <View style={styles.rows}>
+            <Button label="7" click={this.addDigite} />
+            <Button label="8" click={this.addDigite} />
+            <Button label="9" click={this.addDigite} />
+            <Button label="*" click={this.setOperation} operation />
+          </View>
+          <View style={styles.rows}>
+            <Button label="4" click={this.addDigite} />
+            <Button label="5" click={this.addDigite} />
+            <Button label="6" click={this.addDigite} />
+            <Button label="-" click={this.setOperation} operation />
+          </View>
+          <View style={styles.rows}>
+            <Button label="1" click={this.addDigite} />
+            <Button label="2" click={this.addDigite} />
+            <Button label="3" click={this.addDigite} />
+            <Button label="+" click={this.setOperation} operation />
+          </View>
+          <View style={styles.rows}>
+            <Button label="0" click={this.addDigite} doubleSpace />
+            <Button label="." click={this.addDigite} />
+            <Button label="=" click={this.setOperation} operation />
+          </View>
         </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
-  
+
   body: {
     flex: 3,
-    backgroundColor: "#343f4b"
+    backgroundColor: '#343f4b',
   },
 
   rows: {
-    flex:1,
-    flexDirection: "row"
-  }
+    flex: 1,
+    flexDirection: 'row',
+  },
 });
